@@ -1,18 +1,23 @@
 #include "raylib.h"
+#include "player.h"
 
 int main(void) {
-    // Inicializa a janela
-    InitWindow(800, 600, "Tesouro Espacial 🚀");
+    InitWindow(800, 600, "Tesouro Espacial");
     SetTargetFPS(60);
 
-    // Loop principal do jogo
+    Player player;
+    InitPlayer(&player);
+
     while (!WindowShouldClose()) {
+        UpdatePlayer(&player);
+
         BeginDrawing();
-        ClearBackground(BLACK);
-        DrawText("Bem-vindo ao Tesouro Espacial!", 120, 280, 20, RAYWHITE);
+            ClearBackground(BLACK);
+            DrawPlayer(player);
         EndDrawing();
     }
 
+    UnloadPlayer(&player);
     CloseWindow();
     return 0;
 }
