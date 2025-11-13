@@ -23,7 +23,7 @@ void UpdatePlayer(Player *player) {
 }
 
 void DrawPlayer(Player player) {
-    DrawTexture(player.texture, player.position.x, player.position.y, WHITE);
+    DrawTextureEx(player.texture, player.position, 0.0f, 0.09f, WHITE);
 }
 
 void UnloadPlayer(Player *player) {
