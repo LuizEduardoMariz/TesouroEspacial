@@ -9,6 +9,7 @@ int main(void) {
 
     InitWindow(800, 600, "Tesouro Espacial");
     Mapa mapa;
+    mapa_init(&mapa);
     SetTargetFPS(60);
 
     Player player;
