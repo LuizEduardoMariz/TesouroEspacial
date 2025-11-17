@@ -1,21 +1,24 @@
-#ifndef MONSTRO_H
-#define MONSTRO_H
-#include "raylib.h"
+#ifndef MONSTROS_H
+#define MONSTROS_H
 
+#include "raylib.h"
 #include "mapa.h"
+#include "player.h"
+#include <stdbool.h>
 
 typedef struct {
     int x, y;
     bool ativo;
-    float tempoRestante; // 3 segundos
+    float vida;
+    float stepTimer;
     Texture2D sprite;
     int tileSize;
 } Monstro;
 
 void InitMonstro(Monstro *m, int startX, int startY);
-void SpawnMonstro(Monstro *m, int startX, int startY);
-void UpdateMonstro(Monstro *m, const Player *p, float dt, const Mapa *mapa);
+void SpawnMonstro(Monstro *m, int startX, int startY, float vidaSegundos);
+void UpdateMonstro(Monstro *m, Player *player, float dt, const Mapa *mapa);
 void DrawMonstro(const Monstro *m);
-void FreeMonstro(Monstro*m);
+void FreeMonstro(Monstro *m);
 
 #endif

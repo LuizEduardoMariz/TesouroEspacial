@@ -1,63 +1,78 @@
-#include "monstro.h"
-#include "raylib.h"
-#include <math.h>
+#include "monstros.h"
+#include <stdlib.h>
 
 void InitMonstro(Monstro *m, int startX, int startY) {
+    if (!m) return;
     m->x = startX;
     m->y = startY;
     m->ativo = false;
-    m->tempoRestante = 0;
-
-    m->sprite = LoadTexture("assets/monster.png"); #
-    m->tileSize = 32; 
+    m->vida = 0.0f;
+    m->stepTimer = 0.0f;
+    m->sprite = LoadTexture("assets/monster.png");
+    m->tileSize = TILE;
 }
 
-void SpawnMonstro(Monstro *m, int startX, int startY) {
+void SpawnMonstro(Monstro *m, int startX, int startY, float vidaSegundos) {
+    if (!m) return;
     m->x = startX;
     m->y = startY;
-    m->tempoRestante = 3.0f; // 3 sec perseguindo 
-    m->ativo = true; 
+    m->ativo = true;
+    m->vida = vidaSegundos;
+    m->stepTimer = 0.0f;
 }
 
-void UpdateMonstro(Monstro *m, const Jogador *p, float dt, const Mapa *mapa) {
-    if (!m->ativo) return;
-
-    m->tempoRestante -= dt;
-    if (m->tempoRestante <= 0) {
-        m->ativo = false;
-        return;
-    }
-
-    // Movimento de perseguição 
-    int dx = 0, dy = 0;
-
-    if (p->x > m->x) dx = 1;
-    if (p->x < m->x) dx = -1;
-    if (p->y > m->y) dy = 1;
-    if (p->y < m->y) dy = -1;
-
-    int newX = m->x + dx;
-    int newY = m->y + dy;
-
-    if (mapa_get(mapa, newY, newX) != CEL_PAREDE) {
-        m->x = newX;
-        m->y = newY; // para n ser invisivel
-    }
-    //se tocar o jogog acaba
-    if (m->x == p->x && m->y == p->y) {
-        ((Jogador*)p)->vivo = false;
-    }
+static int sign_of(int v) {
+    if (v > 0) return 1;
+    if (v < 0) return -1;
+    return 0;
 }
 
-void DrawMonstro(const Monstro *m) { 
-    if (!m->ativo) return;
+void UpdateMonstro(Monstro *m, Player *player, float dt, const Mapa *mapa) {
+    if (!m || !m->ativo) return;
 
-    DrawTexture(m->sprite,
-                m->x * m->tileSize,
-                m->y * m->tileSize,
-                WHITE);
+    if (m->vida > 0.0f) {
+        m->vida -= dt;
+        if (m->vida <= 0.0f) { m->ativo = false; return; }
+    }
+
+    m->stepTimer += dt;
+    const float STEP_INTERVAL = 0.25f;
+    if (m->stepTimer < STEP_INTERVAL) return;
+    m->stepTimer = 0.0f;
+
+    int dx = sign_of(player->tileX - m->x);
+    int dy = sign_of(player->tileY - m->y);
+
+    int bestX = m->x;
+    int bestY = m->y;
+
+    int distX = abs(player->tileX - m->x);
+    int distY = abs(player->tileY - m->y);
+
+    if (distX >= distY) {
+        if (dx != 0) {
+            if (!mapa_colisao(mapa, m->y, m->x + dx)) bestX = m->x + dx;
+            else if (dy != 0 && !mapa_colisao(mapa, m->y + dy, m->x)) bestY = m->y + dy;
+        } else if (dy != 0 && !mapa_colisao(mapa, m->y + dy, m->x)) bestY = m->y + dy;
+    } else {
+        if (dy != 0) {
+            if (!mapa_colisao(mapa, m->y + dy, m->x)) bestY = m->y + dy;
+            else if (dx != 0 && !mapa_colisao(mapa, m->y, m->x + dx)) bestX = m->x + dx;
+        } else if (dx != 0 && !mapa_colisao(mapa, m->y, m->x + dx)) bestX = m->x + dx;
+    }
+
+    if (bestX != m->x || bestY != m->y) { m->x = bestX; m->y = bestY; }
+
+    if (m->x == player->tileX && m->y == player->tileY) player->vivo = false;
+}
+
+void DrawMonstro(const Monstro *m) {
+    if (!m || !m->ativo) return;
+    DrawTexture(m->sprite, m->x * m->tileSize, m->y * m->tileSize, WHITE);
 }
 
 void FreeMonstro(Monstro *m) {
+    if (!m) return;
     UnloadTexture(m->sprite);
+    m->ativo = false;
 }

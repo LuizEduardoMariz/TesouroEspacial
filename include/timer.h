@@ -30,5 +30,3 @@ double valorTimer(const timer *t);     // tempo restante
 bool estaFinalizado(const timer *t);   // terminou?
 
 #endif
-
-

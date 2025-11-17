@@ -1,63 +1,54 @@
 #include "raylib.h"
-#include "player.h"
-#include "monstros.h"
-#include "moedas.h"
 #include "mapa.h"
-#include <timer.h>
+#include "player.h"
+#include "moedas.h"
+#include "monstros.h"
+#include <stdlib.h>
+#include <time.h>
 
 int main(void) {
+    const int screenW = MAP_W * TILE;
+    const int screenH = MAP_H * TILE;
 
-    InitWindow(800, 600, "Tesouro Espacial");
-    Mapa mapa;
-    mapa_init(&mapa);
+    InitWindow(screenW, screenH, "Tesouro Espacial");
     SetTargetFPS(60);
 
-    Player player;
-    InitPlayer(&player, 2, 2);
+    Mapa mapa;
+    mapa_init(&mapa);
 
-    Monstro monstro;
-    InitMonstro(&monstro, 0, 0);
+    Player player;
+    InitPlayer(&player);
 
     SistemaMoedas moedas;
     InitSistemaMoedas(&moedas);
-
-    srand(time(NULL));
-    
-// Spawn inicial das moedas: 10 moedas, 20s de tempo
+    srand((unsigned)time(NULL));
     StartMoedas(&moedas, 10, 20.0f, &mapa);
 
-// Monstro aparece após X segundos — você pode mudar no loop
-    SpawnMonstro(&monstro, 10, 10);
+    Monstro monstro;
+    InitMonstro(&monstro, 10, 10);
+    SpawnMonstro(&monstro, 10, 10, 30.0f);
 
-    SetTargetFPS(40);
-    
-    
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
-        int key = GetKeyPressed();
 
-
-        UpdatePlayer(&player);
+        UpdatePlayer(&player, &mapa);
         UpdateMoedas(&moedas, &player, dt, &mapa);
         UpdateMonstro(&monstro, &player, dt, &mapa);
 
-        if (!player.vivo) {
-            BeginDrawing();
-            ClearBackground(BLACK);
-            DrawText("GAME OVER", 250, 250, 50, RED);
-            EndDrawing();
-            continue;
-    }
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        DrawMap(&mapa);
+        mapa_desenhar(&mapa);
         DrawMoedas(&moedas);
         DrawMonstro(&monstro);
         DrawPlayer(&player);
 
+        DrawText(TextFormat("Moedas: %d/%d", moedas.coletadas, moedas.total), 8, 8, 20, YELLOW);
+        if (!player.vivo) DrawText("GAME OVER", screenW/2 - 100, screenH/2 - 20, 40, RED);
+
         EndDrawing();
     }
+
     FreePlayer(&player);
     FreeSistemaMoedas(&moedas);
     FreeMonstro(&monstro);
