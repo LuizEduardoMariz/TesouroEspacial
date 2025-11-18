@@ -10,6 +10,7 @@ void InitMonstro(Monstro *m, int startX, int startY) {
     m->stepTimer = 0.0f;
     m->sprite = LoadTexture("assets/monster.png");
     m->tileSize = TILE;
+    m->timerVida = NULL;
 }
 
 void SpawnMonstro(Monstro *m, int startX, int startY, float vidaSegundos) {
@@ -19,6 +20,13 @@ void SpawnMonstro(Monstro *m, int startX, int startY, float vidaSegundos) {
     m->ativo = true;
     m->vida = vidaSegundos;
     m->stepTimer = 0.0f;
+
+    if (m->timerVida != NULL) {
+        destruirTimer(m->timerVida);
+        m->timerVida = NULL;
+    }
+
+    m->timerVida = criarTimer(3.0, true);
 }
 
 static int sign_of(int v) {
@@ -30,9 +38,11 @@ static int sign_of(int v) {
 void UpdateMonstro(Monstro *m, Player *player, float dt, const Mapa *mapa) {
     if (!m || !m->ativo) return;
 
-    if (m->vida > 0.0f) {
-        m->vida -= dt;
-        if (m->vida <= 0.0f) { m->ativo = false; return; }
+    if (m->timerVida != NULL) {
+        if (estaFinalizado(m->timerVida)) {
+            m->ativo = false;
+            return;
+        }
     }
 
     m->stepTimer += dt;
@@ -75,4 +85,9 @@ void FreeMonstro(Monstro *m) {
     if (!m) return;
     UnloadTexture(m->sprite);
     m->ativo = false;
+
+    if (m->timerVida != NULL) {
+        destruirTimer(m->timerVida);
+        m->timerVida = NULL;
+    }
 }

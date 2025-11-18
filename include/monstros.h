@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "mapa.h"
 #include "player.h"
+#include "timer.h"
 #include <stdbool.h>
 
 typedef struct {
@@ -13,6 +14,7 @@ typedef struct {
     float stepTimer;
     Texture2D sprite;
     int tileSize;
+    timer *timerVida;
 } Monstro;
 
 void InitMonstro(Monstro *m, int startX, int startY);

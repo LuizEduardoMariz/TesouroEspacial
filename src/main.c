@@ -5,6 +5,7 @@
 #include "monstros.h"
 #include <stdlib.h>
 #include <time.h>
+#include "timer.h"
 
 int main(void) {
     const int screenW = MAP_W * TILE;
@@ -28,8 +29,16 @@ int main(void) {
     InitMonstro(&monstro, 10, 10);
     SpawnMonstro(&monstro, 10, 10, 30.0f);
 
+    timer *timerFase = criarTimer(60.0, true);
+
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
+
+        atualizarTodosTimers((double)dt);
+
+        if (estaFinalizado(timerFase)) {
+            player.vivo = false;
+        }
 
         UpdatePlayer(&player, &mapa);
         UpdateMoedas(&moedas, &player, dt, &mapa);
@@ -53,6 +62,7 @@ int main(void) {
     FreeSistemaMoedas(&moedas);
     FreeMonstro(&monstro);
     mapa_free(&mapa);
+    destruirTodosTimers();
 
     CloseWindow();
     return 0;
