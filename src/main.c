@@ -17,9 +17,9 @@ typedef struct {
 
 // DEFINIR AS FASES AQUI
 static Fase fases[] = {
-    { "assets/Mapa1.png", 5, 20.0f, 2, 2 },
-    { "assets/mapa2.png", 8, 25.0f, 2, 2 },
-    { "assets/mapa3.png", 10, 30.0f, 2, 2 }
+    { "assets/textures/Mapa1.png", 5, 20.0f, 2, 2 },
+    //{ "assets/mapa2.png", 8, 25.0f, 2, 2 },
+    //{ "assets/mapa3.png", 10, 30.0f, 2, 2 }
 };
 
  
@@ -34,7 +34,10 @@ void CarregarFase(int index, Mapa* mapa, Player* jogador, SistemaMoedas* moedas)
     // libera mapa antigo (se houver)
     mapa_free(mapa);
 
-    // carrega novo mapa a partir do png (sua função)
+    // ⚠️ IMPORTANTE: inicializa o mapa ASCII antes de carregar o PNG
+    mapa_init(mapa);
+
+    // carrega o fundo visual da fase
     mapa_carregar_png(mapa, fases[index].arquivoMapa);
 
     // posiciona jogador na posição inicial da fase

@@ -1,7 +1,7 @@
 #include "player.h"
 
 void InitPlayer(Player *player){ 
-    player->texture = LoadTexture("assets/textures/player.png"); 
+    player->texture = LoadTexture("assets/textures/Personagem.png"); 
     player->speed = 2.5f;
     player->vivo = true;
     player->moedas = 0;

@@ -37,28 +37,31 @@ void mapa_init(Mapa *m) {
     // tenta carregar, mas se não puder, m->hasFundo permanece 0
     // Use Try — Raylib não tem try; LoadTexture pode falhar but usually returns a texture.
     // We'll load and set flag; if file absent you will see console log.
-    m->fundo = LoadTexture("assets/Mapa1.png");
+    m->fundo = LoadTexture("assets/textures/Mapa1.png");
     if (m->fundo.width > 0 && m->fundo.height > 0) m->hasFundo = 1;
 }
 
-void mapa_desenhar(const Mapa *m) {
+void mapa_desenhar(const Mapa *m){
     if (!m) return;
 
-    // se existir fundo, desenha (mantém aparência original)
     if (m->hasFundo) {
-        DrawTexture(m->fundo, 0, 0, WHITE);
-        return;
+
+        DrawTexturePro(
+            m->fundo,
+            (Rectangle){0, 0, m->fundo.width, m->fundo.height},
+            (Rectangle){0, 0, MAP_W * TILE, MAP_H * TILE},
+            (Vector2){0, 0},
+            0.0f,
+            WHITE
+        );
     }
 
-    // caso não exista fundo, desenha tiles simples
+    // desenho ASCII (fallback)
     for (int y = 0; y < MAP_H; y++) {
         for (int x = 0; x < MAP_W; x++) {
             char c = m->tiles[y][x];
             if (c == TILE_WALL) {
-                DrawRectangle(x * TILE, y * TILE, TILE, TILE, (Color){80,40,0,255});
-            } else {
-                // opcional: desenha grade / chão levemente visível
-                DrawRectangleLines(x * TILE, y * TILE, TILE, TILE, (Color){200,200,200,80});
+                DrawRectangle(x*TILE, y*TILE, TILE, TILE, (Color){80,40,0,255});
             }
         }
     }

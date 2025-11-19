@@ -8,7 +8,7 @@ void InitMonstro(Monstro *m, int startX, int startY) {
     m->ativo = false;
     m->vida = 0.0f;
     m->stepTimer = 0.0f;
-    m->sprite = LoadTexture("assets/monster.png");
+    m->sprite = LoadTexture("assets/textures/Monstro1.png");
     m->tileSize = TILE;
     m->timerVida = NULL;
 }

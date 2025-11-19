@@ -7,7 +7,7 @@ void InitSistemaMoedas(SistemaMoedas *s){
     s->coletadas = 0;
     s->tempoRestante = 0;
     s->ativa = false;
-    s->sprite = LoadTexture("assets/moeda.png");
+    s->sprite = LoadTexture("assets/textures/Moeda.png");
 }
 
 void StartMoedas(SistemaMoedas *s, int quantidade, float tempo, Mapa *mapa){
