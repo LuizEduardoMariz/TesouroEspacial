@@ -87,3 +87,21 @@ void mapa_free(Mapa *m) {
     if (m->hasFundo) UnloadTexture(m->fundo);
     m->hasFundo = 0;
 }
+
+void mapa_carregar_png(Mapa *m, const char *arquivo) {
+    if (!m) return;
+
+    if (m->hasFundo) {
+        UnloadTexture(m->fundo);
+        m->hasFundo = 0;
+    }
+
+    Texture2D t = LoadTexture(arquivo);
+
+    if (t.width > 0 && t.height > 0) {
+        m->fundo = t;
+        m->hasFundo = 1;
+    } else {
+        m->hasFundo = 0;
+    }
+}

@@ -27,19 +27,19 @@ static const int totalFases = sizeof(fases) / sizeof(fases[0]);
 static int faseAtual = 0;
 
 
-void CarregarFase(int index, Mapa* mapa, Jogador* jogador, SistemaMoedas* moedas)
+void CarregarFase(int index, Mapa* mapa, Player* jogador, SistemaMoedas* moedas)
 {
     if (index < 0 || index >= totalFases) return;
 
     // libera mapa antigo (se houver)
-    mapa_liberar(mapa);
+    mapa_free(mapa);
 
     // carrega novo mapa a partir do png (sua função)
     mapa_carregar_png(mapa, fases[index].arquivoMapa);
 
     // posiciona jogador na posição inicial da fase
-    jogador->x = fases[index].startX;
-    jogador->y = fases[index].startY;
+    jogador->tileX = fases[index].startX;
+    jogador->tileY = fases[index].startY;
 
     // inicia sistema de moedas para a fase
     StartMoedas(moedas,
@@ -66,19 +66,19 @@ int main(void)
     Mapa mapa;
     // Não chamei mapa_init porque suas funções mostradas usam mapa_carregar_png / mapa_liberar.
     // Apenas inicializo campos se necessário; mapa_carregar_png vai preencher linhas/colunas.
-    mapa.celulas = NULL;
-    mapa.linhas = 0;
-    mapa.colunas = 0;
+    //mapa.celulas = NULL;
+    //mapa.linhas = 0;
+    //mapa.colunas = 0;
 
-    Jogador jogador;
-    InitPlayer(&jogador, 0, 0); //inicializa player; valores serão sobrescritos por CarregarFase
+    Player jogador;
+    InitPlayer(&jogador); //inicializa player; valores serão sobrescritos por CarregarFase
 
     SistemaMoedas moedas;
     InitSistemaMoedas(&moedas);
 
     Monstro monstro;
     InitMonstro(&monstro, 10, 10); 
-    SpawnMonstro(&monstro, 10, 10);
+    SpawnMonstro(&monstro, 10, 10, 5.0f);
 
     timer *timerFase = criarTimer(60.0, true);
 
@@ -97,10 +97,10 @@ int main(void)
             jogador.vivo = false;
         }
 
-        int key = GetKeyPressed(); 
+        //int key = GetKeyPressed(); 
 
         //atualiza
-        UpdatePlayer(&jogador, key, &mapa);
+        UpdatePlayer(&jogador, &mapa);
         UpdateMoedas(&moedas, &jogador, dt, &mapa);
         UpdateMonstro(&monstro, &jogador, dt, &mapa);
 
@@ -108,7 +108,7 @@ int main(void)
         if (!moedas.ativa && moedas.coletadas == moedas.total) {
             faseAtual++;
             if (faseAtual >= totalFases) {
-               #SE COMPLETOU O JOGO, WIN
+               //#SE COMPLETOU O JOGO, WIN
                 jogador.vivo = false;
             } else {
                 CarregarFase(faseAtual, &mapa, &jogador, &moedas);
@@ -134,7 +134,7 @@ int main(void)
     FreePlayer(&jogador);
     FreeSistemaMoedas(&moedas);
     FreeMonstro(&monstro);
-    mapa_liberar(&mapa);
+    mapa_free(&mapa);
 
     destruirTodosTimers();
     CloseWindow();

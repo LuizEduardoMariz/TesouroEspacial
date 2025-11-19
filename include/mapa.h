@@ -24,5 +24,6 @@ int mapa_colisao(const Mapa *m, int tileY, int tileX);
 char mapa_get(const Mapa *m, int y, int x);
 void mapa_set(Mapa *m, int y, int x, char c);
 void mapa_free(Mapa *m);
+void mapa_carregar_png(Mapa *m, const char* arquivo);
 
 #endif
