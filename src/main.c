@@ -17,7 +17,7 @@ typedef struct {
 
 // DEFINIR AS FASES AQUI
 static Fase fases[] = {
-    { "assets/mapa1.png", 5, 20.0f, 2, 2 },
+    { "assets/Mapa1.png", 5, 20.0f, 2, 2 },
     { "assets/mapa2.png", 8, 25.0f, 2, 2 },
     { "assets/mapa3.png", 10, 30.0f, 2, 2 }
 };
