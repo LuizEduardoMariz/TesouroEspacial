@@ -41,31 +41,17 @@ void mapa_init(Mapa *m) {
     if (m->fundo.width > 0 && m->fundo.height > 0) m->hasFundo = 1;
 }
 
-void mapa_desenhar(const Mapa *m){
+void mapa_desenhar(const Mapa *m) {
     if (!m) return;
 
+    // Desenha o PNG exatamente como ele é
     if (m->hasFundo) {
-
-        DrawTexturePro(
-            m->fundo,
-            (Rectangle){0, 0, m->fundo.width, m->fundo.height},
-            (Rectangle){0, 0, MAP_W * TILE, MAP_H * TILE},
-            (Vector2){0, 0},
-            0.0f,
-            WHITE
-        );
+        DrawTexture(m->fundo, 0, 0, WHITE);
     }
 
-    // desenho ASCII (fallback)
-    for (int y = 0; y < MAP_H; y++) {
-        for (int x = 0; x < MAP_W; x++) {
-            char c = m->tiles[y][x];
-            if (c == TILE_WALL) {
-                DrawRectangle(x*TILE, y*TILE, TILE, TILE, (Color){80,40,0,255});
-            }
-        }
-    }
+    // NADA de paredes ASCII aqui.
 }
+
 
 int mapa_colisao(const Mapa *m, int tileY, int tileX) {
     if (!m) return 1;

@@ -3,9 +3,9 @@
 
 #include "raylib.h"
 
-#define TILE 32
 #define MAP_W 38
 #define MAP_H 17
+#define TILE  64
 
 // caracteres usados no mapa textual
 #define TILE_EMPTY '.'
