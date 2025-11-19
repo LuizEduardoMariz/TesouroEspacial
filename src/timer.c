@@ -36,7 +36,7 @@ static void removerDaLista(timer *t) {
     timer *atual = head;
 
     while (atual->next != NULL && atual->next != t) {
-        atual = atual->next;
+        atual = atual->next;s
     }
 
     if (atual->next == t) {
