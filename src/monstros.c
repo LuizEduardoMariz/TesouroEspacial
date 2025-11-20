@@ -1,4 +1,5 @@
 #include "monstros.h"
+#include "sprite.h"
 #include <stdlib.h>
 
 void InitMonstro(Monstro *m, int startX, int startY) {
@@ -78,7 +79,15 @@ void UpdateMonstro(Monstro *m, Player *player, float dt, const Mapa *mapa) {
 
 void DrawMonstro(const Monstro *m) {
     if (!m || !m->ativo) return;
-    DrawTexture(m->sprite, m->x * m->tileSize, m->y * m->tileSize, WHITE);
+
+    float scale = 0.15f;  // ajuste do tamanho do monstro
+
+    DrawSpriteInTile(
+        m->sprite,
+        m->x,
+        m->y,
+        scale
+    );
 }
 
 void FreeMonstro(Monstro *m) {

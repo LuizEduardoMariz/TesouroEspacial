@@ -1,4 +1,5 @@
 #include "moedas.h"
+#include "sprite.h"
 #include <stdlib.h>
 
 void InitSistemaMoedas(SistemaMoedas *s){
@@ -60,9 +61,18 @@ void UpdateMoedas(SistemaMoedas *s, Player *p, float dt, Mapa *mapa){
 
 void DrawMoedas(const SistemaMoedas *s){
     if (!s->ativa) return;
+
+    float scale = 0.10f; // ajuste livre
+
     for (int i = 0; i < s->total; i++){
         if (!s->lista[i].ativa) continue;
-        DrawTexture(s->sprite, s->lista[i].x * TILE, s->lista[i].y * TILE, WHITE);
+
+        DrawSpriteInTile(
+            s->sprite,
+            s->lista[i].x,
+            s->lista[i].y,
+            scale
+        );
     }
 }
 

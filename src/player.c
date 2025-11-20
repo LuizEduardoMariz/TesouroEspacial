@@ -1,4 +1,5 @@
 #include "player.h"
+#include "sprite.h"
 
 void InitPlayer(Player *player){ 
     player->texture = LoadTexture("assets/textures/Personagem.png"); 
@@ -34,8 +35,8 @@ void UpdatePlayer(Player *player, const Mapa *mapa){
 }
 
 void DrawPlayer(const Player *player){
-    // reduz o sprite para ficar proporcional ao tile
-    DrawTextureEx(player->texture, player->position, 0.0f, 0.25f, WHITE);
+    float scale = 0.20f; // tamanho do personagem
+    DrawSpriteInTile(player->texture, player->tileX, player->tileY, scale);
 }
 
 void FreePlayer(Player *player){
