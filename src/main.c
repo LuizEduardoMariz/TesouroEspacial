@@ -6,6 +6,7 @@
 #include "timer.h"
 #include <stdlib.h>
 #include <time.h>
+#include <score.h>
 
 //STRUCT FASES
 typedef struct {
@@ -88,35 +89,72 @@ int main(void)
     faseAtual = 0;
     CarregarFase(faseAtual, &mapa, &jogador, &moedas);
 
-    while (!WindowShouldClose())
+    const char* HIGHSCORE_FILE = "highscore.txt";
+    int highscore = carregarHighscore(HIGHSCORE_FILE);
+    int scoreAtual = 0;
+    bool gameOver = false;
+    bool venceu = false;
+    bool scoreCalculado = false;
+
+while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
 
-        //ATUALIZA O TIMER DA FASE
-        atualizarTodosTimers((double)dt);
+        if (!gameOver) {
+            // ATUALIZA O TIMER DA FASE
+            atualizarTodosTimers((double)dt);
 
-        // SE O TIMER ACABAR, FINALIZA O JOGO
-        if (estaFinalizado(timerFase)) {
-            jogador.vivo = false;
-        }
-
-        //int key = GetKeyPressed(); 
-
-        //atualiza
-        UpdatePlayer(&jogador, &mapa);
-        UpdateMoedas(&moedas, &jogador, dt, &mapa);
-        UpdateMonstro(&monstro, &jogador, dt, &mapa);
-
-        // Verifica se o jogador coletou todas as moedas necessárias para avançar
-        if (!moedas.ativa && moedas.coletadas == moedas.total) {
-            faseAtual++;
-            if (faseAtual >= totalFases) {
-               //#SE COMPLETOU O JOGO, WIN
+            // SE O TIMER ACABAR, DERROTA
+            if (estaFinalizado(timerFase)) {
                 jogador.vivo = false;
-            } else {
-                CarregarFase(faseAtual, &mapa, &jogador, &moedas);
+                gameOver = true;
+                venceu = false;
+            }
+
+            //int key = GetKeyPressed(); 
+
+            // atualiza entidades
+            UpdatePlayer(&jogador, &mapa);
+            UpdateMoedas(&moedas, &jogador, dt, &mapa);
+            UpdateMonstro(&monstro, &jogador, dt, &mapa);
+
+            // se o jogador morreu por monstro/tempo das moedas
+            if (!jogador.vivo && !gameOver) {
+                gameOver = true;
+                venceu = false;
+            }
+
+            // Verifica se o jogador coletou todas as moedas necessárias para avançar
+            if (!moedas.ativa && moedas.coletadas == moedas.total && !gameOver) {
+                faseAtual++;
+                if (faseAtual >= totalFases) {
+                    // COMPLETOU O JOGO -> VITÓRIA
+                    gameOver = true;
+                    venceu = true;
+                } else {
+                    CarregarFase(faseAtual, &mapa, &jogador, &moedas);
+                }
+            }
+
+            // Se o jogo acabou AGORA, calcula score e highscore
+            if (gameOver && !scoreCalculado) {
+                int bonusTempo = 0;
+                if (venceu && moedas.tempoRestante > 0.0f) {
+                    bonusTempo = (int)moedas.tempoRestante * 10;
+                }
+
+                // regra de pontuação simples:
+                scoreAtual = moedas.coletadas * 100 + bonusTempo;
+
+                if (scoreAtual > highscore) {
+                    highscore = scoreAtual;
+                    salvarHighscore(HIGHSCORE_FILE, highscore);
+                }
+
+                scoreCalculado = true;
             }
         }
+
 
         BeginDrawing(); 
             ClearBackground(RAYWHITE); // cor de fundo
@@ -126,10 +164,25 @@ int main(void)
             DrawMonstro(&monstro);
             DrawPlayer(&jogador);
 
-            DrawText(TextFormat("Moedas: %d/%d", moedas.coletadas, moedas.total), 8, 8, 20, YELLOW);
+            DrawText(TextFormat("Moedas: %d/%d", moedas.coletadas, moedas.total),
+                     8, 8, 20, YELLOW);
 
-            if (!jogador.vivo) {
-                DrawText("GAME OVER", screenW/2 - 100, screenH/2 - 20, 40, RED);
+            DrawText(TextFormat("Highscore: %d", highscore),
+                     8, 32, 20, YELLOW);
+
+            if (gameOver) {
+                DrawText(TextFormat("Score: %d", scoreAtual),
+                         8, 56, 20, YELLOW);
+
+                if(venceu){
+                    DrawText("VOCE VENCEU!",
+                            screenW/2 - 140, screenH/2 - 20, 40,
+                            GREEN);
+                }else{
+                   DrawText("GAME OVER",
+                            screenW/2 - 140, screenH/2 - 20, 40,
+                            RED);
+                }
             }
         EndDrawing();
     }
@@ -142,5 +195,6 @@ int main(void)
     destruirTodosTimers();
     CloseWindow();
 
-    return 0;
+    return 0;
 }
+
