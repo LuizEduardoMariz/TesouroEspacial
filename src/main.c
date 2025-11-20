@@ -28,7 +28,7 @@ static const int totalFases = sizeof(fases) / sizeof(fases[0]);
 static int faseAtual = 0;
 
 
-void CarregarFase(int index, Mapa* mapa, Player* jogador, SistemaMoedas* moedas)
+void CarregarFase(int index, Mapa* mapa, Player* player, SistemaMoedas* moedas)
 {
     if (index < 0 || index >= totalFases) return;
 
@@ -42,8 +42,8 @@ void CarregarFase(int index, Mapa* mapa, Player* jogador, SistemaMoedas* moedas)
     mapa_carregar_png(mapa, fases[index].arquivoMapa);
 
     // posiciona jogador na posição inicial da fase
-    jogador->tileX = fases[index].startX;
-    jogador->tileY = fases[index].startY;
+    player->tileX = fases[index].startX;
+    player->tileY = fases[index].startY;
 
     // inicia sistema de moedas para a fase
     StartMoedas(moedas,
@@ -75,7 +75,7 @@ int main(void)
     //mapa.colunas = 0;
 
     Player jogador;
-    InitPlayer(&jogador); //inicializa player; valores serão sobrescritos por CarregarFase
+    InitPlayer(&player); //inicializa player; valores serão sobrescritos por CarregarFase
 
     SistemaMoedas moedas;
     InitSistemaMoedas(&moedas);
@@ -87,7 +87,7 @@ int main(void)
     timer *timerFase = criarTimer(60.0, true);
 
     faseAtual = 0;
-    CarregarFase(faseAtual, &mapa, &jogador, &moedas);
+    CarregarFase(faseAtual, &mapa, &player, &moedas);
 
     const char* HIGHSCORE_FILE = "highscore.txt";
     int highscore = carregarHighscore(HIGHSCORE_FILE);
@@ -106,7 +106,7 @@ while (!WindowShouldClose())
 
             // SE O TIMER ACABAR, DERROTA
             if (estaFinalizado(timerFase)) {
-                jogador.vivo = false;
+                player.vivo = false;
                 gameOver = true;
                 venceu = false;
             }
@@ -114,12 +114,12 @@ while (!WindowShouldClose())
             //int key = GetKeyPressed(); 
 
             // atualiza entidades
-            UpdatePlayer(&jogador, &mapa);
-            UpdateMoedas(&moedas, &jogador, dt, &mapa);
-            UpdateMonstro(&monstro, &jogador, dt, &mapa);
+            UpdatePlayer(&player, &mapa);
+            UpdateMoedas(&moedas, &player, dt, &mapa);
+            UpdateMonstro(&monstro, &player, dt, &mapa);
 
             // se o jogador morreu por monstro/tempo das moedas
-            if (!jogador.vivo && !gameOver) {
+            if (!player.vivo && !gameOver) {
                 gameOver = true;
                 venceu = false;
             }
@@ -132,7 +132,7 @@ while (!WindowShouldClose())
                     gameOver = true;
                     venceu = true;
                 } else {
-                    CarregarFase(faseAtual, &mapa, &jogador, &moedas);
+                    CarregarFase(faseAtual, &mapa, &player, &moedas);
                 }
             }
 
@@ -162,7 +162,7 @@ while (!WindowShouldClose())
             mapa_desenhar(&mapa);
             DrawMoedas(&moedas);
             DrawMonstro(&monstro);
-            DrawPlayer(&jogador);
+            DrawPlayer(&player);
 
             DrawText(TextFormat("Moedas: %d/%d", moedas.coletadas, moedas.total),
                      8, 8, 20, YELLOW);
@@ -187,7 +187,7 @@ while (!WindowShouldClose())
         EndDrawing();
     }
 
-    FreePlayer(&jogador);
+    FreePlayer(&player);
     FreeSistemaMoedas(&moedas);
     FreeMonstro(&monstro);
     mapa_free(&mapa);
