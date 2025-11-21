@@ -4,11 +4,13 @@
 int carregarHighscore(const char *caminho) {
     FILE *f = fopen(caminho, "r");
     if (f==NULL) {
-        return 0; // se o arquivo não existir ainda, retorna 0
+        return 0; // se o arquivo no existir ainda, retorna 0
     }
 
     int hs = 0;
-    fscanf(f, "%d", &hs);
+    if (fscanf(f, "%d", &hs) != 1){
+    hs = 0;
+    }
     fclose(f);
     return hs;
 }
@@ -20,5 +22,5 @@ void salvarHighscore(const char *caminho, int highscore) {
     }
 
     fprintf(f, "%d\n", highscore);
-    fclose(f);
+fclose(f);
 }

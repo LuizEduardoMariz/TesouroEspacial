@@ -75,7 +75,7 @@ int main(void)
     //mapa.colunas = 0;
 
     Player jogador;
-    InitPlayer(&player); //inicializa player; valores serão sobrescritos por CarregarFase
+    InitPlayer(&jogador); //inicializa player; valores serão sobrescritos por CarregarFase
 
     SistemaMoedas moedas;
     InitSistemaMoedas(&moedas);
@@ -87,14 +87,14 @@ int main(void)
     timer *timerFase = criarTimer(60.0, true);
 
     faseAtual = 0;
-    CarregarFase(faseAtual, &mapa, &player, &moedas);
+    CarregarFase(faseAtual, &mapa, &jogador, &moedas);
 
     const char* HIGHSCORE_FILE = "highscore.txt";
     int highscore = carregarHighscore(HIGHSCORE_FILE);
     int scoreAtual = 0;
     bool gameOver = false;
     bool venceu = false;
-    bool scoreCalculado = false;
+    bool scoreCalculado = false;
 
 while (!WindowShouldClose())
     {
@@ -106,7 +106,7 @@ while (!WindowShouldClose())
 
             // SE O TIMER ACABAR, DERROTA
             if (estaFinalizado(timerFase)) {
-                player.vivo = false;
+                jogador.vivo = false;
                 gameOver = true;
                 venceu = false;
             }
@@ -114,12 +114,12 @@ while (!WindowShouldClose())
             //int key = GetKeyPressed(); 
 
             // atualiza entidades
-            UpdatePlayer(&player, &mapa);
-            UpdateMoedas(&moedas, &player, dt, &mapa);
-            UpdateMonstro(&monstro, &player, dt, &mapa);
+            UpdatePlayer(&jogador, &mapa);
+            UpdateMoedas(&moedas, &jogador, dt, &mapa);
+            UpdateMonstro(&monstro, &jogador, dt, &mapa);
 
             // se o jogador morreu por monstro/tempo das moedas
-            if (!player.vivo && !gameOver) {
+            if (!jogador.vivo && !gameOver) {
                 gameOver = true;
                 venceu = false;
             }
@@ -132,7 +132,7 @@ while (!WindowShouldClose())
                     gameOver = true;
                     venceu = true;
                 } else {
-                    CarregarFase(faseAtual, &mapa, &player, &moedas);
+                    CarregarFase(faseAtual, &mapa, &jogador, &moedas);
                 }
             }
 
@@ -162,7 +162,7 @@ while (!WindowShouldClose())
             mapa_desenhar(&mapa);
             DrawMoedas(&moedas);
             DrawMonstro(&monstro);
-            DrawPlayer(&player);
+            DrawPlayer(&jogador);
 
             DrawText(TextFormat("Moedas: %d/%d", moedas.coletadas, moedas.total),
                      8, 8, 20, YELLOW);
@@ -187,7 +187,7 @@ while (!WindowShouldClose())
         EndDrawing();
     }
 
-    FreePlayer(&player);
+    FreePlayer(&jogador);
     FreeSistemaMoedas(&moedas);
     FreeMonstro(&monstro);
     mapa_free(&mapa);
@@ -195,6 +195,6 @@ while (!WindowShouldClose())
     destruirTodosTimers();
     CloseWindow();
 
-    return 0;
+    return 0;
 }
 
