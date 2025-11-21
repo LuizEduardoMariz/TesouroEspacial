@@ -151,26 +151,26 @@ int main(void)
         float dt = GetFrameTime();
 
         if (!gameOver) {
-            // ATUALIZA OS TIMERS (ex.: timerVida do monstro)
-            atualizarTodosTimers((double)dt);
+    atualizarTodosTimers((double)dt);
 
-            // atualiza entidades
-            UpdatePlayer(&player, &mapa);
-            UpdateMoedas(&moedas, &player, dt, &mapa);
-            UpdateMonstro(&monstro, &player, dt, &mapa);
+    UpdatePlayer(&player, &mapa);
+    UpdateMonstro(&monstro, &player, dt, &mapa);
+    UpdateMoedas(&moedas, &player, dt, &mapa);
 
-            CheckEndConditions(&player,
-                               &moedas,
-                               &faseAtual,
-                               totalFases,
-                               &mapa,
-                               HIGHSCORE_FILE,
-                               &scoreAtual,
-                               &highscore,
-                               &gameOver,
-                               &venceu,
-                               &scoreCalculado);
-        }
+    CheckEndConditions(timerFase,
+                       &player,
+                       &moedas,
+                       &faseAtual,
+                       totalFases,
+                       &mapa,
+                       HIGHSCORE_FILE,
+                       &scoreAtual,
+                       &highscore,
+                       &gameOver,
+                       &venceu,
+                       &scoreCalculado);
+}
+
 
         BeginDrawing();
             ClearBackground(RAYWHITE);
