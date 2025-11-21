@@ -2,18 +2,34 @@
 #include "sprite.h"
 
 void InitPlayer(Player *player){ 
-    player->texture = LoadTexture("assets/textures/Personagem.png"); 
+
+    Image img = LoadImage("assets/textures/Personagem.png");
+
+    // Cor do fundo (branco puro)
+    Color bg = (Color){255, 255, 255, 255};
+
+    // Cor transparente
+    Color transparent = (Color){0, 0, 0, 0};
+
+    // Remove o fundo branco
+    ImageColorReplace(&img, bg, transparent);
+
+    // Converte para textura
+    player->texture = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    // Configurações normais do player
     player->speed = 2.5f;
     player->vivo = true;
     player->moedas = 0;
 
-    // spawn inicial - escolha um tile vazio caso precise
     player->tileX = 1;
     player->tileY = 1;
 
     player->position.x = player->tileX * TILE;
     player->position.y = player->tileY * TILE;
 }
+
 
 void UpdatePlayer(Player *player, const Mapa *mapa){
     int nextX = player->tileX;

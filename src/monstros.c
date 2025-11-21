@@ -9,7 +9,16 @@ void InitMonstro(Monstro *m, int startX, int startY) {
     m->ativo = false;
     m->vida = 0.0f;
     m->stepTimer = 0.0f;
-    m->sprite = LoadTexture("assets/textures/Monstro1.png");
+    Image img = LoadImage("assets/textures/Monstro1.png");
+
+    Color branco = (Color){255,255,255,255};
+    Color transparente = (Color){0,0,0,0};
+
+    ImageColorReplace(&img, branco, transparente);
+
+    m->sprite = LoadTextureFromImage(img);
+    UnloadImage(img);
+
     m->tileSize = TILE;
     m->timerVida = NULL;
 }
