@@ -19,14 +19,67 @@ typedef struct {
 // DEFINIR AS FASES AQUI
 static Fase fases[] = {
     { "assets/textures/Mapa1.png", 5, 20.0f, 2, 2 },
-    //{ "assets/mapa2.png", 8, 25.0f, 2, 2 },
+    //{ "assets/mapa2.png", 8, 25.0f, 2, 2  },
     //{ "assets/mapa3.png", 10, 30.0f, 2, 2 }
 };
 
  
 static const int totalFases = sizeof(fases) / sizeof(fases[0]);
 static int faseAtual = 0;
+void SetGameOver(bool venceu, Player* player, SistemaMoedas* moedas, int* scoreAtual, int* highscore, const char* highscoreFile, bool* gameOver, bool* scoreCalculado)
+{
+    // evita que seja executado mais de uma vez
+    if (*gameOver) return;
+    *gameOver = true;
+    // se perdeu, garante que o player está morto
+    if (!venceu)
+        player->vivo = false;
 
+    // calcula score apenas uma vez
+    if (!(*scoreCalculado)) {
+        int bonusTempo = 0;
+        if (venceu && moedas->tempoRestante > 0.0f) {
+            bonusTempo = (int)(moedas->tempoRestante) * 10;
+        }
+        *scoreAtual = moedas->coletadas * 100 + bonusTempo;
+        if (*scoreAtual > *highscore) {
+            *highscore = *scoreAtual;
+            salvarHighscore(highscoreFile, *highscore);
+        }
+        *scoreCalculado = true;
+    }
+}
+void CheckEndConditions(timer* timerFase, Player* player, SistemaMoedas* moedas, int* faseAtual, int totalFases, Mapa* mapa, const char* highscoreFile, int* scoreAtual, int* highscore, bool* gameOver, bool* venceu, bool* scoreCalculado)
+{
+    if (*gameOver) return;
+    // timer acabou -> derrota  
+    if (estaFinalizado(timerFase)) {
+        *venceu = false;
+        SetGameOver(false, player, moedas, scoreAtual, highscore,
+                    highscoreFile, gameOver, scoreCalculado);
+        return;
+    }
+    // player morreu por monstro/colisão
+    if (!player->vivo) {
+        *venceu = false;
+        SetGameOver(false, player, moedas, scoreAtual, highscore,
+                    highscoreFile, gameOver, scoreCalculado);
+        return;
+    }
+    // coletou todas as moedas da fase → avançar ou terminar
+    if (!moedas->ativa && moedas->coletadas == moedas->total) {
+        (*faseAtual)++;
+        if (*faseAtual >= totalFases) {
+            // venceu
+            *venceu = true;
+            SetGameOver(true, player, moedas, scoreAtual, highscore,
+                        highscoreFile, gameOver, scoreCalculado);
+        } else {
+            // Carrega a próxima fase normalmente
+            CarregarFase(*faseAtual, mapa, player, moedas);
+        }
+    }
+}
 
 void CarregarFase(int index, Mapa* mapa, Player* player, SistemaMoedas* moedas)
 {
@@ -35,7 +88,7 @@ void CarregarFase(int index, Mapa* mapa, Player* player, SistemaMoedas* moedas)
     // libera mapa antigo (se houver)
     mapa_free(mapa);
 
-    // ⚠️ IMPORTANTE: inicializa o mapa ASCII antes de carregar o PNG
+    // ⚠ IMPORTANTE: inicializa o mapa ASCII antes de carregar o PNG
     mapa_init(mapa);
 
     // carrega o fundo visual da fase
@@ -74,8 +127,9 @@ int main(void)
     //mapa.linhas = 0;
     //mapa.colunas = 0;
 
-    Player jogador;
-    InitPlayer(&jogador); //inicializa player; valores serão sobrescritos por CarregarFase
+    Player player   ;
+    InitPlayer(&player); //inicializa player; valores serão sobrescritos por CarregarFase
+    player.vivo = true;
 
     SistemaMoedas moedas;
     InitSistemaMoedas(&moedas);
@@ -87,7 +141,7 @@ int main(void)
     timer *timerFase = criarTimer(60.0, true);
 
     faseAtual = 0;
-    CarregarFase(faseAtual, &mapa, &jogador, &moedas);
+    CarregarFase(faseAtual, &mapa, &player, &moedas);
 
     const char* HIGHSCORE_FILE = "highscore.txt";
     int highscore = carregarHighscore(HIGHSCORE_FILE);
@@ -97,72 +151,36 @@ int main(void)
     bool scoreCalculado = false;
 
 while (!WindowShouldClose())
-    {
-        float dt = GetFrameTime();
+{
+    float dt = GetFrameTime();
 
-        if (!gameOver) {
-            // ATUALIZA O TIMER DA FASE
-            atualizarTodosTimers((double)dt);
+    if (!gameOver) {
+        atualizarTodosTimers((double)dt);
 
-            // SE O TIMER ACABAR, DERROTA
-            if (estaFinalizado(timerFase)) {
-                jogador.vivo = false;
-                gameOver = true;
-                venceu = false;
-            }
+        atualizarPlayer(&player, &mapa);
+        atualizarMonstro(&monstro, &player);
+        atualizarSistemaMoedas(&moedas, &player);
 
-            //int key = GetKeyPressed(); 
-
-            // atualiza entidades
-            UpdatePlayer(&jogador, &mapa);
-            UpdateMoedas(&moedas, &jogador, dt, &mapa);
-            UpdateMonstro(&monstro, &jogador, dt, &mapa);
-
-            // se o jogador morreu por monstro/tempo das moedas
-            if (!jogador.vivo && !gameOver) {
-                gameOver = true;
-                venceu = false;
-            }
-
-            // Verifica se o jogador coletou todas as moedas necessárias para avançar
-            if (!moedas.ativa && moedas.coletadas == moedas.total && !gameOver) {
-                faseAtual++;
-                if (faseAtual >= totalFases) {
-                    // COMPLETOU O JOGO -> VITÓRIA
-                    gameOver = true;
-                    venceu = true;
-                } else {
-                    CarregarFase(faseAtual, &mapa, &jogador, &moedas);
-                }
-            }
-
-            // Se o jogo acabou AGORA, calcula score e highscore
-            if (gameOver && !scoreCalculado) {
-                int bonusTempo = 0;
-                if (venceu && moedas.tempoRestante > 0.0f) {
-                    bonusTempo = (int)moedas.tempoRestante * 10;
-                }
-
-                // regra de pontuação simples:
-                scoreAtual = moedas.coletadas * 100 + bonusTempo;
-
-                if (scoreAtual > highscore) {
-                    highscore = scoreAtual;
-                    salvarHighscore(HIGHSCORE_FILE, highscore);
-                }
-
-                scoreCalculado = true;
-            }
-        }
-
-
+        CheckEndConditions(timerFase,
+                           &player,
+                           &moedas,
+                           &faseAtual,
+                           totalFases,
+                           &mapa,
+                           HIGHSCORE_FILE,
+                           &scoreAtual,
+                           &highscore,
+                           &gameOver,
+                           &venceu,
+                           &scoreCalculado);
+    }
         BeginDrawing(); 
             ClearBackground(RAYWHITE); // cor de fundo
 
             mapa_desenhar(&mapa);
             DrawMoedas(&moedas);
             DrawMonstro(&monstro);
-            DrawPlayer(&jogador);
+            DrawPlayer(&player);
 
             DrawText(TextFormat("Moedas: %d/%d", moedas.coletadas, moedas.total),
                      8, 8, 20, YELLOW);
@@ -187,7 +205,7 @@ while (!WindowShouldClose())
         EndDrawing();
     }
 
-    FreePlayer(&jogador);
+    FreePlayer(&player);
     FreeSistemaMoedas(&moedas);
     FreeMonstro(&monstro);
     mapa_free(&mapa);
@@ -195,6 +213,5 @@ while (!WindowShouldClose())
     destruirTodosTimers();
     CloseWindow();
 
-    return 0;
+return 0;
 }
-
