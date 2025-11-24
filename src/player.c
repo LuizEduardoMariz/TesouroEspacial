@@ -51,7 +51,7 @@ void UpdatePlayer(Player *player, const Mapa *mapa){
 }
 
 void DrawPlayer(const Player *player){
-    float scale = 0.20f; // tamanho do personagem
+    float scale = 0.15f; // tamanho do personagem
     DrawSpriteInTile(player->texture, player->tileX, player->tileY, scale);
 }
 
