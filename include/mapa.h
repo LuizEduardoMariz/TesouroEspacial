@@ -3,9 +3,10 @@
 
 #include "raylib.h"
 
-#define MAP_W 38
-#define MAP_H 17
-#define TILE  64
+// Ajustado para casar com PNG 1920x1080
+#define MAP_W 32
+#define MAP_H 18
+#define TILE  60
 
 // caracteres usados no mapa textual
 #define TILE_EMPTY '.'
@@ -14,11 +15,11 @@
 
 typedef struct {
     char tiles[MAP_H][MAP_W];
-    Texture2D fundo;    // opcional: se existir assets/Mapa1.png
+    Texture2D fundo;
     int hasFundo;
 } Mapa;
 
-void mapa_init(Mapa *m);
+void mapa_init_fase(Mapa *m, int fase);
 void mapa_desenhar(const Mapa *m);
 int mapa_colisao(const Mapa *m, int tileY, int tileX);
 char mapa_get(const Mapa *m, int y, int x);

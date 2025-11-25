@@ -1,79 +1,106 @@
 #include "mapa.h"
 #include <string.h>
 
-const char *desenho[MAP_H] = {
-    "######################################",
-    "#............##.......................#",
-    "#..######....##....########...........#",
-    "#............##.......................#",
-    "####..############..#########..########",
-    "#.....................................#",
-    "#..########...............#########...#",
-    "#.....................................#",
-    "#..########..##########..#########...#",
-    "#.....................................#",
-    "#..########...............#########...#",
-    "#.....................................#",
-    "####..############..##########..#######",
-    "#.....................................#",
-    "#..######....##....########...........#",
-    "#............##.......................#",
-    "######################################"
+// -------------------------------
+// ASCII DA FASE 1
+// -------------------------------
+static const char *desenhoFase1[MAP_H] = {
+    "................................",
+    "....................########....",
+    "......######....................",
+    "..................##......##....",
+    "..##..............##......##....",
+    "..##..............##............",
+    "..##......######................",
+    "..##..........##................",
+    "................................",
+    "....####........................",
+    "......##......................##",
+    "........##..............####..##",
+    "..........##..........##........",
+    "##..................####..##....",
+    "##..................####..##....",
+    "##..................##..........",
+    "......................######....",
+    "................................"
 };
 
-void mapa_init(Mapa *m) {
+// -------------------------------
+// ASCII DA FASE 2
+// -------------------------------
+static const char *desenhoFase2[MAP_H] = {
+    "##########....##....############",
+    "#.............##...............#",
+    "#......###....##.....####..###.#",
+    "#.....####....##..##.####..###.#",
+    "..##..............##...........#",
+    "..##..............##...........#",
+    "..##......######........##.....#",
+    "..##..........###.......######..",
+    "............##.....###..........",
+    "....####....##.....###..........",
+    "#.....##......#####.............",
+    "#....#...........##.....####....",
+    "#....#.....##.........##........",
+    "#.####....###.##.##.####...###.#",
+    "#.###..#......##.##.##.....###.#",
+    "#.###..##.....##.##.##.....###.#",
+    "#.............##.##............#",
+    "############..##.##...##########"
+};
+
+// -------------------------------------------------------------
+// Inicializa tiles baseado na fase
+// -------------------------------------------------------------
+void mapa_init_fase(Mapa *m, int fase) {
     if (!m) return;
 
-    // copia desenho ASCII para tiles
+    const char **src = (fase == 0) ? desenhoFase1 : desenhoFase2;
+
     for (int y = 0; y < MAP_H; y++) {
         for (int x = 0; x < MAP_W; x++) {
-            m->tiles[y][x] = desenho[y][x];
+            m->tiles[y][x] = src[y][x];
         }
     }
 
-    // tenta carregar fundo (opcional). se não existir, hasFundo = 0
-    // coloque assets/Mapa1.png se quiser usar a imagem real como fundo
     m->hasFundo = 0;
-    // tenta carregar, mas se não puder, m->hasFundo permanece 0
-    // Use Try — Raylib não tem try; LoadTexture pode falhar but usually returns a texture.
-    // We'll load and set flag; if file absent you will see console log.
-    m->fundo = LoadTexture("assets/textures/Mapa1.png");
-    if (m->fundo.width > 0 && m->fundo.height > 0) m->hasFundo = 1;
 }
 
+// Desenhar PNG da fase
 void mapa_desenhar(const Mapa *m) {
     if (!m) return;
 
-    // Desenha o PNG exatamente como ele é
-    if (m->hasFundo) {
+    if (m->hasFundo)
         DrawTexture(m->fundo, 0, 0, WHITE);
-    }
-
-    // NADA de paredes ASCII aqui.
 }
-
 
 int mapa_colisao(const Mapa *m, int tileY, int tileX) {
     if (!m) return 1;
     if (tileX < 0 || tileY < 0 || tileX >= MAP_W || tileY >= MAP_H) return 1;
+
     return (m->tiles[tileY][tileX] == TILE_WALL);
 }
 
 char mapa_get(const Mapa *m, int y, int x) {
     if (!m) return TILE_WALL;
     if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return TILE_WALL;
+
     return m->tiles[y][x];
 }
 
 void mapa_set(Mapa *m, int y, int x, char c) {
     if (!m) return;
     if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return;
+
     m->tiles[y][x] = c;
 }
 
 void mapa_free(Mapa *m) {
     if (!m) return;
-    if (m->hasFundo) UnloadTexture(m->fundo);
+
+    if (m->hasFundo)
+        UnloadTexture(m->fundo);
+
     m->hasFundo = 0;
 }
 
@@ -90,7 +117,5 @@ void mapa_carregar_png(Mapa *m, const char *arquivo) {
     if (t.width > 0 && t.height > 0) {
         m->fundo = t;
         m->hasFundo = 1;
-    } else {
-        m->hasFundo = 0;
     }
 }

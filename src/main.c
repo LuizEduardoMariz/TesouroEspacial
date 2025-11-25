@@ -108,24 +108,26 @@ void CarregarFase(int index, Mapa* mapa, Player* player, SistemaMoedas* moedas)
 {
     if (index < 0 || index >= totalFases) return;
 
-    // libera mapa antigo (se houver)
+    // libera mapa antigo
     mapa_free(mapa);
 
-    // inicializa o mapa ASCII antes de carregar o PNG
-    mapa_init(mapa);
+    // inicializa o mapa ASCII correspondente à fase
+    mapa_init_fase(mapa, index);
 
-    // carrega o fundo visual da fase
+    // carrega a imagem PNG da fase
     mapa_carregar_png(mapa, fases[index].arquivoMapa);
 
-    // posiciona jogador na posição inicial da fase
+    // posiciona o jogador
     player->tileX = fases[index].startX;
     player->tileY = fases[index].startY;
 
-    // inicia sistema de moedas para a fase
-    StartMoedas(moedas,
-                fases[index].moedasNecessarias,
-                fases[index].tempoLimite,
-                mapa);
+    // inicia sistema de moedas
+    StartMoedas(
+        moedas,
+        fases[index].moedasNecessarias,
+        fases[index].tempoLimite,
+        mapa
+    );
 }
 
 // --------------------------
