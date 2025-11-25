@@ -175,6 +175,9 @@ int main(void)
 
             UpdatePlayer(&player, &mapa);
             UpdateMonstro(&monstro, &player, dt, &mapa);
+            if (player.vivo && !monstro.ativo){
+                SpawnMonstro(&monstro, 10, 10, 15.0f);
+            }
             UpdateMoedas(&moedas, &player, dt, &mapa);
 
             CheckEndConditions(&player,
