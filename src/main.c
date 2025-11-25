@@ -139,6 +139,11 @@ int main(void)
     const int screenH = MAP_H * TILE;
 
     InitWindow(screenW, screenH, "Tesouro Espacial");
+
+    InitAudioDevice();
+    Music music = LoadMusicStream("assets/audio/heavy_battle.ogg");
+    PlayMusicStream(music);
+
     SetTargetFPS(60);
 
     srand((unsigned)time(NULL));
@@ -168,6 +173,7 @@ int main(void)
 
     while (!WindowShouldClose())
     {
+        UpdateMusicStream(music);
         float dt = GetFrameTime();
 
         if (!gameOver) {
@@ -230,6 +236,8 @@ int main(void)
     mapa_free(&mapa);
 
     destruirTodosTimers();
+    UnloadMusicStream(music);
+    CloseAudioDevice();
     CloseWindow();
 
 return 0;
