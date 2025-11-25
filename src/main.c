@@ -20,8 +20,8 @@ typedef struct {
 
 // DEFINIR AS FASES AQUI
 static Fase fases[] = {
-    { "assets/textures/Mapa1.png", 5, 90.0f, 2, 2 },
-    { "assets/textures/Mapa2.png", 8, 70.0f, 2, 2 },
+    { "assets/textures/Mapa1.png", 9, 90.0f, 2, 2 },
+    { "assets/textures/Mapa2.png", 13, 70.0f, 2, 2 },
     //{ "assets/mapa3.png", 10, 30.0f, 2, 2 }
 };
 
@@ -152,7 +152,7 @@ int main(void)
 
     Monstro monstro;
     InitMonstro(&monstro, 10, 10);
-    SpawnMonstro(&monstro, 10, 10, 5.0f);
+    SpawnMonstro(&monstro, 10, 10, 15.0f);
 
     faseAtual = 0;
     CarregarFase(faseAtual, &mapa, &player, &moedas);

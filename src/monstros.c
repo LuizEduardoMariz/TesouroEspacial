@@ -36,7 +36,7 @@ void SpawnMonstro(Monstro *m, int startX, int startY, float vidaSegundos) {
         m->timerVida = NULL;
     }
 
-    m->timerVida = criarTimer(3.0, true);
+    m->timerVida = criarTimer((double)vidaSegundos, true);
 }
 
 static int sign_of(int v) {
@@ -109,3 +109,5 @@ void FreeMonstro(Monstro *m) {
         m->timerVida = NULL;
     }
 }
+
+
