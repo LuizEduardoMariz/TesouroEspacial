@@ -130,9 +130,6 @@ void CarregarFase(int index, Mapa* mapa, Player* player, SistemaMoedas* moedas)
     );
 }
 
-// --------------------------
-// main
-// --------------------------
 int main(void)
 {
     const int screenW = MAP_W * TILE;
