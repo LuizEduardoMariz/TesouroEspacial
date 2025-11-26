@@ -171,6 +171,8 @@ int main(void)
     bool venceu = false;
     bool scoreCalculado = false;
 
+    timer* timerRespawn = NULL;
+
     while (!WindowShouldClose())
     {
         UpdateMusicStream(music);
@@ -181,9 +183,17 @@ int main(void)
 
             UpdatePlayer(&player, &mapa);
             UpdateMonstro(&monstro, &player, dt, &mapa);
-            if (player.vivo && !monstro.ativo){
+
+            if (player.vivo && !monstro.ativo && timerRespawn == NULL) {
+                timerRespawn = criarTimer(5.0, true);   
+            }
+
+            if (timerRespawn != NULL && estaFinalizado(timerRespawn)) {
+                destruirTimer(timerRespawn);
+                timerRespawn = NULL;
                 SpawnMonstro(&monstro, 10, 10, 15.0f);
             }
+
             UpdateMoedas(&moedas, &player, dt, &mapa);
 
             CheckEndConditions(&player,
@@ -234,6 +244,10 @@ int main(void)
     FreeSistemaMoedas(&moedas);
     FreeMonstro(&monstro);
     mapa_free(&mapa);
+
+    if (timerRespawn != NULL) {      
+        destruirTimer(timerRespawn);
+    }
 
     destruirTodosTimers();
     UnloadMusicStream(music);
