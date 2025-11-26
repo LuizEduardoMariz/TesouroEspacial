@@ -14,17 +14,17 @@
 #define TILE_COIN  'C'
 
 typedef struct {
-    char tiles[MAP_H][MAP_W];
+    char tiles[MAP_H][MAP_W]; // matriz do mapa em caracteres
     Texture2D fundo;
     int hasFundo;
 } Mapa;
 
-void mapa_init_fase(Mapa *m, int fase);
-void mapa_desenhar(const Mapa *m);
-int mapa_colisao(const Mapa *m, int tileY, int tileX);
-char mapa_get(const Mapa *m, int y, int x);
-void mapa_set(Mapa *m, int y, int x, char c);
-void mapa_free(Mapa *m);
+void mapa_init_fase(Mapa *m, int fase); 
+void mapa_desenhar(const Mapa *m); // desenha o fundo do mapa
+int mapa_colisao(const Mapa *m, int tileY, int tileX); // verifica colisão em (tileY, tileX)
+char mapa_get(const Mapa *m, int y, int x); // obtém o caractere na posição (y,x)
+void mapa_set(Mapa *m, int y, int x, char c); // define o caractere na posição (y,x)
+void mapa_free(Mapa *m); // libera recursos do mapa
 void mapa_carregar_png(Mapa *m, const char* arquivo);
 
 #endif

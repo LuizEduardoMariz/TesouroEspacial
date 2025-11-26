@@ -28,14 +28,7 @@ static Fase fases[] = {
 static const int totalFases = sizeof(fases) / sizeof(fases[0]);
 static int faseAtual = 0;
 
-void SetGameOver(bool venceu,
-                 Player* player,
-                 SistemaMoedas* moedas,
-                 int* scoreAtual,
-                 int* highscore,
-                 const char* highscoreFile,
-                 bool* gameOver,
-                 bool* scoreCalculado)
+void SetGameOver(bool venceu, Player* player, SistemaMoedas* moedas, int* scoreAtual, int* highscore, const char* highscoreFile, bool* gameOver, bool* scoreCalculado)
 {
     // evita que seja executado mais de uma vez
     if (*gameOver) return;
@@ -64,17 +57,7 @@ void SetGameOver(bool venceu,
     }
 }
 
-void CheckEndConditions(Player* player,
-                        SistemaMoedas* moedas,
-                        int* faseAtualPtr,
-                        int totalFasesParam,
-                        Mapa* mapa,
-                        const char* highscoreFile,
-                        int* scoreAtual,
-                        int* highscore,
-                        bool* gameOver,
-                        bool* venceu,
-                        bool* scoreCalculado)
+void CheckEndConditions(Player* player, SistemaMoedas* moedas, int* faseAtualPtr, int totalFasesParam, Mapa* mapa, const char* highscoreFile, int* scoreAtual, int* highscore, bool* gameOver, bool* venceu, bool* scoreCalculado)
 {
     if (*gameOver) return;
 
@@ -193,17 +176,7 @@ int main(void)
 
             UpdateMoedas(&moedas, &player, dt, &mapa);
 
-            CheckEndConditions(&player,
-                               &moedas,
-                               &faseAtual,
-                               totalFases,
-                               &mapa,
-                               HIGHSCORE_FILE,
-                               &scoreAtual,
-                               &highscore,
-                               &gameOver,
-                               &venceu,
-                               &scoreCalculado);
+            CheckEndConditions(&player, &moedas, &faseAtual, totalFases, &mapa, HIGHSCORE_FILE, &scoreAtual, &highscore, &gameOver, &venceu, &scoreCalculado);
         }
 
         BeginDrawing();

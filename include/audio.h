@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 
-void InitAudio();
+void InitAudio(); 
 void UpdateAudio();
 void CloseAudio();
 

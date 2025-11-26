@@ -11,11 +11,5 @@ void DrawSpriteInTile(Texture2D tex, int tileX, int tileY, float scale) {
     float posX = tileX * TILE + (TILE - drawW) / 2.0f;
     float posY = tileY * TILE + (TILE - drawH) / 2.0f;
 
-    DrawTextureEx(
-        tex,
-        (Vector2){ posX, posY },
-        0.0f,
-        scale,
-        WHITE
-    );
+    DrawTextureEx(tex, (Vector2){ posX, posY }, 0.0f, scale, WHITE);
 }

@@ -1,9 +1,6 @@
 #include "mapa.h"
 #include <string.h>
 
-// -------------------------------
-// ASCII DA FASE 1
-// -------------------------------
 static const char *desenhoFase1[MAP_H] = {
     "................................",
     "....................########....",
@@ -25,9 +22,6 @@ static const char *desenhoFase1[MAP_H] = {
     "................................"
 };
 
-// -------------------------------
-// ASCII DA FASE 2
-// -------------------------------
 static const char *desenhoFase2[MAP_H] = {
     "##########....##....############",
     "#.............##...............#",
@@ -48,10 +42,7 @@ static const char *desenhoFase2[MAP_H] = {
     "#.............##.##............#",
     "############..##.##...##########"
 };
-
-// -------------------------------------------------------------
-// Inicializa tiles baseado na fase
-// -------------------------------------------------------------
+//inicializa o mapa com o desenho da fase
 void mapa_init_fase(Mapa *m, int fase) {
     if (!m) return;
 

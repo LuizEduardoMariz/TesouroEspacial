@@ -6,10 +6,6 @@
 
 static timer *head = NULL; // cabeça da lista encadeada
 
-// --------------------------------------------------------
-// Lista Encadeada
-// --------------------------------------------------------
-
 static void adicionarTimer(timer *t) {
     if (t == NULL) {
         return;
@@ -43,10 +39,6 @@ static void removerDaLista(timer *t) {
         atual->next = t->next;
     }
 }
-
-// --------------------------------------------------------
-// Criação / Destruição
-// --------------------------------------------------------
 
 timer *criarTimer(double duracao, bool iniciar) {
     timer *t = (timer *)malloc(sizeof(timer));
@@ -90,10 +82,6 @@ void destruirTodosTimers(void) {
     head = NULL;
 }
 
-// --------------------------------------------------------
-// Controle
-// --------------------------------------------------------
-
 void iniciarTimer(timer *t) {
     if (t == NULL) {
         return;
@@ -119,10 +107,6 @@ void reiniciarTimer(timer *t) {
     t->finalizado = false;
     t->ativo = true;
 }
-
-// --------------------------------------------------------
-// Atualização
-// --------------------------------------------------------
 
 void atualizarTimer(timer *t, double dt) {
     if (t == NULL) {
@@ -156,10 +140,6 @@ void atualizarTodosTimers(double dt) {
         atual = atual->next;
     }
 }
-
-// --------------------------------------------------------
-// Consulta
-// --------------------------------------------------------
 
 double valorTimer(const timer *t) {
     if (t == NULL) {

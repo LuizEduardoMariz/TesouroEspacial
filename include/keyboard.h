@@ -5,7 +5,7 @@
 
 void keyboardInit(void);
 void keyboardDestroy(void);
-int keyboardHit(void);
-int keyboardRead(void);
+int keyboardHit(void); // retorna 1 se uma tecla foi pressionada, 0 caso contrário
+int keyboardRead(void); 
 
 #endif
